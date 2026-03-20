@@ -7,6 +7,8 @@
 #include "proc.h"
 #include "vm.h"
 
+extern struct proc proc[NPROC];
+
 uint64
 sys_exit(void)
 {
@@ -106,4 +108,28 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+uint64
+sys_procanalyze(void)
+{
+    int pid;
+    argint(0, &pid);
+
+    struct proc *p;
+
+    for(p = proc; p < &proc[NPROC]; p++){
+        if(p->pid == pid){
+            printf("PID: %d\n", p->pid);
+            printf("Runtime: %d\n", p->runtime);
+            printf("Context Switches: %d\n", p->context_switches);
+
+            if(p->cpu_alert)
+                printf("Status: HIGH CPU\n");
+            else
+                printf("Status: NORMAL\n");
+
+            return 0;
+        }
+    }
+    return -1;
 }
