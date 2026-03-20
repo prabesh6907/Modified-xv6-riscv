@@ -447,6 +447,13 @@ scheduler(void)
         p->state = RUNNING;
         c->proc = p;
         swtch(&c->context, &p->context);
+	p->runtime++;
+	p->context_switches++;
+
+	if(p->runtime > 150)
+    		p->cpu_alert = 1;
+	else
+    		p->cpu_alert = 0;
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
