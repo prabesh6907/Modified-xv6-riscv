@@ -162,45 +162,42 @@ procanalyze 1
 ## 📸 Project Demonstration
 
 ### 1. xv6 Boot (Environment Setup Verification)
-![Boot](screenshots/booting1_xv6.png)
-![Boot](screenshots/booting2_xv6.png)
+![Boot](screenshots/booting1_xv6.png) <br>
+
+---
+
+![Boot](screenshots/booting2_xv6.png) <br>
 xv6 operating system successfully booted using the QEMU emulator, confirming correct setup of the development and execution environment.
 
 ---
 
 ### 2. Default xv6 Functionality
-![Basic](screenshots/Basic_Func_xv6.png)
+![Basic](screenshots/basic_func_xv6.png) <br>
 Demonstrates the standard xv6 environment and built-in commands before applying our custom modifications.
 
 ---
 
 ### 3. Process Statistics Analysis
-![Stats](screenshots/process_statistics_demo1.png)
+![Stats](screenshots/process_stats_demo1.png) <br>
 Output of the custom `procanalyze` system call displaying process runtime, context switches, and CPU usage status.
 
 ---
 
 ### 4. Creating Multiple Processes
-![Multi](screenshots/creating_more_processes.png)
-Additional shell processes were created using repeated `sh` commands to simulate a multi-process environment and observe scheduler behavior.
+![Multi](screenshots/creating_more_processes.png) <br>
+Additional shell processes were created using repeated `sh` commands to simulate a multi-process environment.
 
 ---
 
 ### 5. Error Handling for Invalid Process ID
-![Error](screenshots/Handling_error_of_non_existent_processes.png)
+![Error](screenshots/Handling_error_of_non_existent_process.png) <br>
 Demonstrates robust error handling when a non-existent process ID is passed to the `procanalyze` command.
 
 ---
 
 ### 6. CPU Runtime Tracking
-![CPU](screenshots/cpu_time_change.png)
+![CPU](screenshots/cpu_time_change.png) <br>
 Shows increase in CPU runtime over time, validating the correctness of process runtime tracking within the kernel.
-
----
-
-### 7. GitHub Repository (Version Control)
-![Repo](screenshots/07_github_repo.png)
-Project repository showcasing version control, commit history, and structured development workflow.
 
 ---
 
