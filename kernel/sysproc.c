@@ -119,17 +119,18 @@ sys_procanalyze(void)
 
     for(p = proc; p < &proc[NPROC]; p++){
         if(p->pid == pid){
-            printf("PID: %d\n", p->pid);
+            printf("Process ID (PID): %d\n", p->pid);
             printf("Runtime: %d\n", p->runtime);
             printf("Context Switches: %d\n", p->context_switches);
 
             if(p->cpu_alert)
-                printf("Status: HIGH CPU\n");
+                printf("CPU Usage Status: HIGH\n");
             else
-                printf("Status: NORMAL\n");
+                printf("CPU Usage Status: NORMAL\n");
 
             return 0;
         }
     }
+    printf("Error: Process not found\n");
     return -1;
 }
