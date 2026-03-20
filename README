@@ -1,46 +1,226 @@
-xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
-Version 6 (v6).  xv6 loosely follows the structure and style of v6,
-but is implemented for a modern RISC-V multiprocessor using ANSI C.
+# Process Statistics and Status Monitoring in xv6
 
-ACKNOWLEDGMENTS
+## 📌 Overview
 
-xv6 is inspired by John Lions's Commentary on UNIX 6th Edition (Peer
-to Peer Communications; ISBN: 1-57398-013-7; 1st edition (June 14,
-2000)).  See also https://pdos.csail.mit.edu/6.1810/, which provides
-pointers to on-line resources for v6.
+This project extends the functionality of the original xv6 (RISC-V) operating system by introducing kernel-level enhancements for **process statistics tracking** and **runtime status monitoring**.
 
-The following people have made contributions: Russ Cox (context switching,
-locking), Cliff Frey (MP), Xiao Yu (MP), Nickolai Zeldovich, and Austin
-Clements.
+Unlike the base system, which provides minimal visibility into process behavior, this modification enables detailed introspection of process execution characteristics through a custom system call and user-level interface.
 
-We are also grateful for the bug reports and patches contributed by
-Abhinavpatel00, Takahiro Aoyagi, Marcelo Arroyo, Hirbod Behnam, Silas
-Boyd-Wickizer, Anton Burtsev, carlclone, Ian Chen, clivezeng, Dan
-Cross, Cody Cutler, Mike CAT, Tej Chajed, Asami Doi,Wenyang Duan,
-echtwerner, eyalz800, Nelson Elhage, Saar Ettinger, Alice Ferrazzi,
-Nathaniel Filardo, flespark, Peter Froehlich, Yakir Goaron, Shivam
-Handa, Matt Harvey, Bryan Henry, jaichenhengjie, Jim Huang, Matúš
-Jókay, John Jolly, Alexander Kapshuk, Anders Kaseorg, kehao95,
-Wolfgang Keller, Jungwoo Kim, Jonathan Kimmitt, Eddie Kohler, Vadim
-Kolontsov, Austin Liew, l0stman, Pavan Maddamsetti, Imbar Marinescu,
-Yandong Mao, Matan Shabtay, Hitoshi Mitake, Carmi Merimovich,
-mes900903, Mark Morrissey, mtasm, Joel Nider, Hayato Ohhashi,
-OptimisticSide, papparapa, phosphagos, Harry Porter, Greg Price, Zheng
-qhuo, Quancheng, RayAndrew, Jude Rich, segfault, Ayan Shafqat, Eldar
-Sehayek, Yongming Shen, Fumiya Shigemitsu, snoire, Taojie, Cam Tenny,
-tyfkda, Warren Toomey, Stephen Tu, Alissa Tung, Rafael Ubal, unicornx,
-Amane Uehara, Pablo Ventura, Luc Videau, Xi Wang, WaheedHafez, Keiichi
-Watanabe, Lucas Wolf, Nicolas Wolovick, wxdao, Grant Wu, x653, Andy
-Zhang, Jindong Zhang, Icenowy Zheng, ZhUyU1997, and Zou Chang Wei.
+---
 
-ERROR REPORTS
+## 🚀 Key Features (Our Modifications)
 
-Please send errors and suggestions to Frans Kaashoek and Robert Morris
-(kaashoek,rtm@mit.edu).  The main purpose of xv6 is as a teaching
-operating system for MIT's 6.1810, so we are more interested in
-simplifications and clarifications than new features.
+### 🔹 1. Process Statistics Tracking
 
-BUILDING AND RUNNING XV6
+* Added new fields to the process structure (`struct proc`)
+* Tracks:
+
+  * Total CPU runtime
+  * Number of context switches
+  * Execution state
+
+👉 This enables deeper visibility into process lifecycle and scheduling behavior.
+
+---
+
+### 🔹 2. Runtime Monitoring in Scheduler
+
+* Modified the scheduler to:
+
+  * Continuously update runtime of processes
+  * Track context switch events
+* Provides real-time accumulation of execution metrics
+
+---
+
+### 🔹 3. Custom System Call: `procanalyze`
+
+* Implemented a new system call:
+
+  ```
+  procanalyze(int pid)
+  ```
+* Retrieves and displays:
+
+  * Process ID
+  * Runtime statistics
+  * Context switch count
+  * Current status
+
+---
+
+### 🔹 4. User-Level Command Integration
+
+* Created a user program (`procanalyze.c`)
+* Allows easy access from shell:
+
+  ```
+  procanalyze 1
+  ```
+
+---
+
+## 🧠 Design Philosophy
+
+This project focuses on:
+
+* Minimal but meaningful kernel modifications
+* High observability of process behavior
+* Clean integration with existing xv6 architecture
+
+---
+
+## ⚙️ Setup & Execution Guide (WSL - Ubuntu)
+
+### 🔹 Step 1: Install Dependencies
+
+```bash
+sudo apt update
+sudo apt install build-essential qemu-system gcc-riscv64-linux-gnu
+```
+
+---
+
+### 🔹 Step 2: Clone Repository
+
+```bash
+git clone https://github.com/prabesh6907/Modified-xv6-riscv.git
+cd Modified-xv6-riscv
+```
+
+---
+
+### 🔹 Step 3: Build and Run xv6
+
+```bash
+make clean
+make qemu
+```
+
+---
+
+## ⚠️ Common Errors & Fixes
+
+### ❌ RISC-V Compiler Error
+
+```
+Couldn't find a riscv64 version of GCC
+```
+
+✔ Fix:
+
+```bash
+sudo apt install gcc-riscv64-linux-gnu
+```
+
+---
+
+### ❌ `proc` undeclared
+
+✔ Fix:
+Add in `sysproc.c`:
+
+```c
+#include "proc.h"
+extern struct proc proc[NPROC];
+```
+
+---
+
+### ❌ syscall not recognized
+
+✔ Fix:
+
+* Add in `user/user.h`
+* Add in `user/usys.pl`
+
+---
+
+### ❌ exec failed
+
+✔ Fix:
+Add to `Makefile`:
+
+```
+$U/_procanalyze\
+```
+
+---
+
+## 🧪 Running the Feature
+
+Inside xv6 shell:
+
+```bash
+procanalyze 1
+```
+
+👉 PID 1 is always active (`init` process), ensuring consistent output.
+
+---
+
+## 📸 Project Demonstration
+
+### 1. xv6 Boot
+![Boot](screenshots/01_xv6_boot.png)
+xv6 successfully booted using QEMU.
+
+### 2. Default Commands
+![LS](screenshots/02_ls_baseline.png)
+Shows base xv6 functionality.
+
+### 3. Process Analysis (PID 1)
+![PID1](screenshots/03_procanalyze_pid1.png)
+Displays process statistics.
+
+### 4. Multiple Processes
+![Multi](screenshots/04_multiple_processes.png)
+System handling multiple processes.
+
+### 5. Invalid PID Handling
+![Error](screenshots/05_invalid_pid.png)
+Graceful error handling.
+
+### 6. CPU Time Tracking
+![CPU](screenshots/06_cpu_time_change.png)
+Shows increasing CPU usage.
+
+### 7. GitHub Repository
+![Repo](screenshots/07_github_repo.png)
+Project repository with commits.
+
+---
+
+## 📁 Project Structure (Modified Files)
+
+* `kernel/proc.h` → Added statistics fields
+* `kernel/proc.c` → Scheduler tracking logic
+* `kernel/sysproc.c` → System call implementation
+* `user/procanalyze.c` → User command
+* `Makefile` → Build integration
+
+---
+
+## 🎯 Significance of the Work
+
+This enhancement transforms xv6 from a minimal teaching OS into a system capable of:
+
+* Runtime process introspection
+* Basic performance monitoring
+* Improved understanding of scheduling behavior
+
+---
+
+## 📎 Conclusion
+
+The project demonstrates how small, targeted kernel modifications can significantly enhance system observability. It provides a practical example of extending operating system functionality while maintaining architectural simplicity.
+
+---
+
+## 🙌 Acknowledgment
+
+This project is based on the xv6 (RISC-V) operating system developed by MIT.
+
 
 You will need a RISC-V "newlib" tool chain from
 https://github.com/riscv/riscv-gnu-toolchain, and qemu compiled for
