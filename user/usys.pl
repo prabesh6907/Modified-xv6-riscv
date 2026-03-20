@@ -23,6 +23,7 @@ sub entry {
 	
 entry("fork");
 entry("exit");
+entry("procanalyze");
 entry("wait");
 entry("pipe");
 entry("read");
