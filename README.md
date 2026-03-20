@@ -127,15 +127,6 @@ extern struct proc proc[NPROC];
 
 ---
 
-### ❌ syscall not recognized
-
-✔ Fix:
-
-* Add in `user/user.h`
-* Add in `user/usys.pl`
-
----
-
 ### ❌ exec failed
 
 ✔ Fix:
